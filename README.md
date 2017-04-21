@@ -22,7 +22,7 @@ can connect to the X11 server.
 		--env UID=$(id -u) \
 		--env GID=$(id -g) \
 		--net=host \
-		solfin/talend:5.6
+		ggalibourg/talend-tos_di:6.3
 
 ## Configuration
 
@@ -38,14 +38,14 @@ ENVIRONMENT VARIABLES (only available with `docker run`)
 
 Using `environment variables`
 
-    docker run -it -e TZ=EST5EDT
+    docker run -it -e TZ=CET
 
 # Build this Docker
 
 You may use this command:
 
 	docker build \
-		--tag=ggalibourg/talend-tos_di:5.6 \
+		--tag=ggalibourg/talend-tos_di:6.3 \
 		.
 
 But the download of the TOS_DI image make take a long while, in which case you may want to run buildit.sh instead which
