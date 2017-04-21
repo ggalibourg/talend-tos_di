@@ -2,23 +2,25 @@
 FROM debian:jessie
 
 
-# prepare ENV variables
-ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-
 # Install everything
 RUN \
 # Surpress Upstart errors/warning
 	dpkg-divert --local --rename --add /sbin/initctl && \
 	ln -sf /bin/true /sbin/initctl && \
+# Add backport to debian jessie so we have java8
+	sed \
+		-e '$adeb http://deb.debian.org/debian jessie-backports main' \
+		-i /etc/apt/sources.list && \
 # Load all required packages (for unzip, bzip, java dependencies, etc ...)
 	DEBIAN_FRONTEND=noninteractive apt-get update && \
 	DEBIAN_FRONTEND=noninteractive apt-get -y upgrade && \
 	DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends \
+		-t jessie-backports \ 
 		bzip2 \
 		curl \
 		less \
 		net-tools \
-		openjdk-7-jdk \
+		openjdk-8-jdk \
 		unzip \
 		vim-tiny \
 		x11-apps \
@@ -27,8 +29,8 @@ RUN \
 		true
 
 
-ARG TOS_DI_VERS=5.6.3
-ARG TOS_DI_FULLVERS=20160127_1448-V${TOS_DI_VERS}
+ARG TOS_DI_VERS=6.3.1
+ARG TOS_DI_FULLVERS=20161216_1026-V${TOS_DI_VERS}
 ARG TOS_DI_FILE=TOS_DI-${TOS_DI_FULLVERS}.zip
 
 ARG TOS_DI_CMD="curl --location https://downloads.sourceforge.net/project/talend-studio/Talend%20Open%20Studio/${TOS_DI_VERS}/${TOS_DI_FILE} --output /tmp/${TOS_DI_FILE}"
@@ -80,6 +82,9 @@ RUN \
 	true
 
 VOLUME ["/home/talend"]
+
+# prepare ENV variables
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 COPY entrypoint.sh /
 
